@@ -39,7 +39,7 @@ class MockLayer1:
         t.start()
         return
 
-    def read(self, callback):
+    def from_wire(self, callback):
         while True:
             try:
                 # the `address` value is an implementation detail here; we

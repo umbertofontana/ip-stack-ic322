@@ -34,3 +34,6 @@ class StubLayer2:
 
         # Let's just forward this up to layer 3.
         self.layer_3_cb(data)
+
+
+# This code will run as soon as this file is imported (probably from Layer 3)
