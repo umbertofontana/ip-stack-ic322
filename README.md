@@ -1,8 +1,22 @@
 # IC322 Project 1 Template
 
+## Quick Start
 
-## 
+This template will run a simple networked "application stack". The `run-applications` program will run two Layer 5 applications: a server and a messenger. Run is like this:
 
+```
+python3 ./run-applications.py --input1=1201 --output1=1202
+```
+
+Each "local process running on your computer" represents a single Raspbery Pi. Open up another terminal window and run another process:
+
+```
+python3 ./run-applications.py --input1=1202 --output1=1201
+```
+
+Notice that the input1 "pin" on one process is set to the output1 "pin" on the other process. This is how we will simulate connections between Raspberry Pis. When we implement this on real hardware, expect pin numbers to be low numbers, like "3" or "12". When testing on your local computer, set the pin numbers as high numbers like "8000" and "8001". Behind the scenes, this test harness is using local sockets to simulate GPIO pins.
+
+If type a message in one window and press **Enter**, the message should appear in the other window.
 
 ## Initializing the network stack
 
