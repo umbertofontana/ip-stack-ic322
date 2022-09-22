@@ -1,8 +1,9 @@
-# This is a simple client that recieves user input and sends it to...?
+# This is a simple networked application that can both send and
+# receive data. Think of it as "telnet".
 
 import logging
 
-class SimpleClient:
+class SimpleApp:
     def __init__(self, layer4):
         """Create a client "process".
 
