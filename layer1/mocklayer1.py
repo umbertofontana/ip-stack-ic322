@@ -105,7 +105,7 @@ class MockLayer1:
                         # add bit
                         data_string = data_string[0:i] + str(randint(0,1))+ data_string[i:]
                     else:
-                        # dorp bit
+                        # drop bit
                         data_string = data_string[0:i] + data_string[i+1:]
         else:
             data_string = data
@@ -118,7 +118,7 @@ class MockLayer1:
                         # add bit
                         data_string = data_string[0:i] + random.choice(string.ascii_letters) + data_string[i:]
                     else:
-                        # dorp bit
+                        # drop bit
                         data_string = data_string[0:i] + data_string[i+1:]
 
         self.output_socket.sendto(data_string.encode(),("127.0.0.1", self.output_pin))

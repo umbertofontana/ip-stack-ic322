@@ -13,7 +13,7 @@ If you're not familiar with `git`, these last few paragraphs may have been very 
 * [git - the simple guide](https://rogerdudler.github.io/git-guide/)
 * [An Intro to Git and GitHub for Beginners](https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners)
 
-If you need push access to this repo, [sign up here](https://docs.google.com/spreadsheets/d/1biImDDhnDIEgjpMm-ukaPP5Wm4oQLrLI0-MGbBk_uMc/edit#gid=0). (USNA account required.)
+If you need push access to this repo, [send an access request](https://docs.gitlab.com/ee/user/project/members/#request-access-to-a-project).
 
 ## Quick Start
 
