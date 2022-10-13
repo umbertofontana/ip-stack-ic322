@@ -3,6 +3,7 @@
 import sys
 from socket import *
 from threading import Thread
+import random, string
 
 def parse_args():
     """A very simple command line argument parser. It supports arguments in the form of
@@ -36,9 +37,11 @@ class MockLayer1:
         `interface_number`  - Integer. Specify the interface number this Layer 1
              instance will be associated with. The pins associated with this interface
              are set using command line arguments. As an example:
-                --input1=13 --output1=14 --fliprate1=0.1 --noiserate1=0.1
+                --input1=13 --output1=14 --fliprate1=0.1 --noiserate1=0.1 --droprate=0.2
              `fliprate` indicates the probability that a bit will be flipped.
              `noiserate` indicates the probability that a bit will be added or subtracted from the message.
+             `droprate` indicates the probability that an entire message will be dropped. This is useful for
+                        testing Layer 4 reliable data transfer.
 
         `enforce_binary` - Bool. Defaults to False. If set to True, this Layer will expect `data` from
                            Layer 2 to be a List of 1's and 0's in the form [0, 1, 0, 1, 1, ...].
@@ -63,6 +66,11 @@ class MockLayer1:
         else:
             self.noise_rate = 0
 
+        if f"droprate{interface_number}" in args.keys():
+            self.drop_rate = float(args[f"droprate{interface_number}"])
+        else:
+            self.drop_rate = 0
+
         # Connect to input pin
         self.input_socket = socket(AF_INET, SOCK_DGRAM)
         self.input_socket.bind(("127.0.0.1", self.input_pin))
@@ -80,12 +88,38 @@ class MockLayer1:
         `data` - List of Integers. Example: [0, 1, 1, 0]
         """
 
+        # Simulate packet dropping
+        if random.randint(0, 100) < self.drop_rate * 100:
+            return
+
         # Convert the List of Ints into a string. (The if statement isn't strictly needed,
         # but it makes the code clearer.)
         if self.enforce_binary:
             data_string = "".join([str(x) for x in data])
+            # simulate bit flips and noise
+            for i,b in enumerate(data):
+                if random.randint(0, 100) < self.flip_rate * 100:
+                    data_string = data_string[0:i] + str((int(data_string) + 1) % 2) + data_string[i+1:]
+                if random.randint(0, 100) < self.noise_rate * 100:
+                    if random.randint(0,1) == 0: 
+                        # add bit
+                        data_string = data_string[0:i] + str(randint(0,1))+ data_string[i:]
+                    else:
+                        # dorp bit
+                        data_string = data_string[0:i] + data_string[i+1:]
         else:
             data_string = data
+            # simulate bit flips and noise
+            for i,b in enumerate(data):
+                if random.randint(0, 100) < self.flip_rate * 100:
+                    data_string = data_string[0:i] + random.choice(string.ascii_letters) + data_string[i+1:]
+                if random.randint(0, 100) < self.noise_rate * 100:
+                    if random.randint(0,1) == 0: 
+                        # add bit
+                        data_string = data_string[0:i] + random.choice(string.ascii_letters) + data_string[i:]
+                    else:
+                        # dorp bit
+                        data_string = data_string[0:i] + data_string[i+1:]
 
         self.output_socket.sendto(data_string.encode(),("127.0.0.1", self.output_pin))
 
