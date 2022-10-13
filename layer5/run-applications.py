@@ -8,6 +8,12 @@ import sys
 sys.path.append('../')
 import layer4.stub_layer_4 as Layer4
 import simple_app as SimpleApp
+import logging
+
+# This line sets the logging level to "DEBUG".
+# Here's more information about logging in Python:
+# https://docs.python.org/3/howto/logging.html
+logging.basicConfig(level=logging.DEBUG)
 
 layer4 = Layer4.StubLayer4()
 

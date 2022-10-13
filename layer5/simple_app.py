@@ -34,5 +34,3 @@ class SimpleApp:
         # and addr to None.
         self.layer4.from_layer_5(data=data, src_port=None,
                 dest_port=None, dest_addr=None)
-
-

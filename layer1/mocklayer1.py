@@ -23,25 +23,45 @@ def parse_args():
     return cmd_line_key_values
 
 class MockLayer1:
-    def __init__(self, interface_number, layer_2_cb):
+    def __init__(self, interface_number, layer_2_cb, enforce_binary=False):
         """Create a Layer 1 Object. This Layer 1 implementation is a "mock"
         in the sense that it does not connect to any GPIO pins. It connects
         with other processes running on the same computer through UDP sockets.
 
         `layer_2_cb` - Function. This layer will use `layer_2_cb` to pass data to Layer 2. `layer_2_cb`
-                       must accept a single parameter `data`.
+                       must accept a single parameter `data`. If `enforce_binary` is True, this will be a
+                       List of Integers in the form [0, 1, 1, 0, ...]. If `enforce_binary` is false it
+                       will be a string.
 
         `interface_number`  - Integer. Specify the interface number this Layer 1
              instance will be associated with. The pins associated with this interface
              are set using command line arguments. As an example:
-                --input1=13 --output1=14
+                --input1=13 --output1=14 --fliprate1=0.1 --noiserate1=0.1
+             `fliprate` indicates the probability that a bit will be flipped.
+             `noiserate` indicates the probability that a bit will be added or subtracted from the message.
+
+        `enforce_binary` - Bool. Defaults to False. If set to True, this Layer will expect `data` from
+                           Layer 2 to be a List of 1's and 0's in the form [0, 1, 0, 1, 1, ...].
+                           If set to False, it will expect `data` from Layer 2 to be a string.
         """
 
         # The pin for interface 1 is defined as a command line argument --input1=12 or some such.
         # The output would be defined as --output2=13.
+        # `fliprate` indicates the probability that a bit will be flipped.
+        # `noiserate` indicates the probability that a bit will be added or subtracted from the message.
         args = parse_args()
+        self.enforce_binary = enforce_binary
         self.input_pin = int(args[f"input{interface_number}"])
         self.output_pin = int(args[f"output{interface_number}"])
+        if f"fliprate{interface_number}" in args.keys():
+            self.flip_rate = float(args[f"fliprate{interface_number}"])
+        else:
+            self.flip_rate = 0
+
+        if f"noiserate{interface_number}" in args.keys():
+            self.noise_rate = float(args[f"noiserate{interface_number}"])
+        else:
+            self.noise_rate = 0
 
         # Connect to input pin
         self.input_socket = socket(AF_INET, SOCK_DGRAM)
@@ -55,11 +75,24 @@ class MockLayer1:
         self.listen(layer_2_cb)
 
     def from_layer_2(self, data):
-        self.output_socket.sendto(data.encode(),("127.0.0.1", self.output_pin))
+        """Receives a List of 1's and 0's from layer 2 and sends them over the interface.
+
+        `data` - List of Integers. Example: [0, 1, 1, 0]
+        """
+
+        # Convert the List of Ints into a string. (The if statement isn't strictly needed,
+        # but it makes the code clearer.)
+        if self.enforce_binary:
+            data_string = "".join([str(x) for x in data])
+        else:
+            data_string = data
+
+        self.output_socket.sendto(data_string.encode(),("127.0.0.1", self.output_pin))
 
     def listen(self, callback):
         """Listens to the input queue and calls `callback` with
-        data when something is received."""
+        data when something is received.
+        """
         t = Thread(target=self.from_wire, args = (callback,))
         t.start()
         return
@@ -70,9 +103,13 @@ class MockLayer1:
                 # the `address` value is an implementation detail here; we
                 # will discard it.
                 data, address = self.input_socket.recvfrom(2048)
-                callback(data.decode())
+                
+                # convert data from a string to a List of Ints
+                if self.enforce_binary:
+                    parsed_data = [int(x) for x in data.decode()]
+                else:
+                    parsed_data = data.decode()
+                callback(parsed_data)
             except BlockingIOError:
                 pass
 
-if __name__ == "__main__":
-    pass
