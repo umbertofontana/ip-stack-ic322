@@ -7,7 +7,7 @@ from threading import Thread
 import sys
 sys.path.append('../')
 import layer4.stub_layer_4 as Layer4
-import simple_app as SimpleApp
+import my_simple_app as SimpleApp
 import logging
 
 # This line sets the logging level to "DEBUG".
@@ -32,8 +32,15 @@ def start_client():
         # pass the receiver_addr = None.
         client.send(None, msg)
 
-
+# Create a Server
 t = Thread(target=start_server, args = ())
 t.start()
+# Create Client 1
+t = Thread(target=start_client, args = ())
+t.start()
+# Create Client 2
+t = Thread(target=start_client, args = ())
+t.start()
+# Create Client 3
 t = Thread(target=start_client, args = ())
 t.start()
