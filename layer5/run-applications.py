@@ -7,7 +7,7 @@ from threading import Thread
 import sys
 sys.path.append('../')
 import layer4.stub_layer_4 as Layer4
-import my_simple_app as SimpleApp
+import my_simple_app as SimpleApp # Remember to change this when we merge
 import logging
 
 # This line sets the logging level to "DEBUG".
