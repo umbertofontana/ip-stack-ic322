@@ -6,11 +6,15 @@ sys.path.append('../')
 import layer3.stub_layer_3 as Layer3
 import logging
 import base64
+from time import time
 
 # Dictionary that correlates a port number to the object layer_5_cb
+# Server is on port 1200, Client is on port 1201
 connections = {}
 # Dictionary that increments the port number for each connection
 portincrement = {"p":15000}
+# Dictionary used to check if we are waiting for an ACK. If 0 we are not waiting for an ACK, if 1 we are waiting for an ACK
+ackcheck = {"ACK":0}
 
 class StubLayer4:
 
@@ -20,23 +24,32 @@ class StubLayer4:
         self.layer3 = Layer3.StubLayer3(self.from_layer_3)
 
     # Connect an application to a socket.
-    def connect_to_socket(self, port_number, layer_5_cb, portassigner):
+    def connect_to_socket(self, layer_5_cb, port):
 
-        # First connection is the server. All subsequent connections are clients
-        # This function always gets called with port number 80. We need to assign it a new port number
         self.layer_5_cb = layer_5_cb
-        self.portassigner = portassigner
+        # self.portassigner = portassigner
         logging.debug(f"Socket connected")
+        
+        # Based on the port value (0 for chat client, 1 for weapon control) assign the right socket and save it
+        connections[port] = self.layer_5_cb
 
-        # Server is assigned port 15000. All other clients will have an incremental port starting at 15001
-        socketport = portincrement["p"]
-        connections[socketport] = self.layer_5_cb
-        # Send back the port number to the process in order for him to know his own port number
-        self.portassigner(socketport)
-        # Increment the port number for future connections
-        socketport = socketport + 1
-        portincrement["p"] = socketport
         logging.debug(f"{connections}")
+
+    # Timeout function
+    #def timeout(self):
+    #    start = time()
+    #    while ackcheck["ACK"] == 1:
+    #        if time() - start < 3:
+    #            continue
+    #        else:
+    #            return False # Ack did not arrive in the expected time
+    #    return True # Ack arrived in the expected time
+    
+    # Function to send an ACK
+    def sendack(self):
+        ack = "ACK"
+        segment = f"{ack}..."
+        self.layer3.from_layer_4(segment)
 
     # Call this function to send data to this Layer from Layer 5.
     def from_layer_5(self, data, src_port, dest_port, dest_addr):
@@ -53,7 +66,13 @@ class StubLayer4:
         segment = f".{header}.{data}"
         # Pass the message down to Layer 3
         self.layer3.from_layer_4(segment)
-        # Now that I've sent the message, I need to stop and wait for the ACK to send the next one. Implement this!
+        # Now that I've sent the message, I need to stop and wait for the ACK
+        # ackcheck["ACK"] = 1
+        # self.timeout() # I want to pass this function to the timeout function and call it back when it's done
+        # while self.timeout() == False:
+        #    self.sendack() # Send ACK again
+        
+            
         # See line 73. Pseudo-code:
         # while acklist[0] is empty > continue looping (if Layer 5 calls the function does it overrides this?) else > Erase dict and go on!
 
@@ -67,11 +86,11 @@ class StubLayer4:
 
         if ack == "ACK":
             # We have received an ACK: can proceed to send next segment
+        #    ackcheck["ACK"] = 0 # Reset the dictionary
             # Send next segment
             logging.debug(f"ACK received")
             # This is the place to send the next packet when I implement a queue in the stop-and-wait protocol
-            # I might add the ACK to a dictionary, and check if the dictionary is empty with the function above, then erase it and go on
-            # Pseudo-code: acklist[0] = ack -> This could also be use to implement sequence numbers in the future!
+           
         else:
             # The segment received is a new segment: pass it to Layer 5
             dest_port = int(dest_port)
@@ -79,10 +98,10 @@ class StubLayer4:
             data = str(data, "utf-8")
             logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {dest_port} from port {src_port}")
             # Then, send an ACK back to src_port: in order to recognize the packet as an ACK, the first field is ACK and all others are empty
-            ack = "ACK"
-            segment = f"{ack}..."
-            self.layer3.from_layer_4(segment)
+            self.sendack()
             # Implement multiplexing based on the destination port in the header and send the data to Layer 5
             connections[dest_port](data)
+
+    
         
         
