@@ -6,8 +6,8 @@ from threading import Thread
 
 import sys
 sys.path.append('../')
-import layer4.stub_layer_4 as Layer4
-import my_simple_app as SimpleApp # Remember to change this when we merge
+import layer4.l4_layer_4 as Layer4
+import l4_simple_app as SimpleApp # Remember to change this when we merge
 import logging
 
 # Chat: port 0

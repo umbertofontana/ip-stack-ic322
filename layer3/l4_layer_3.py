@@ -3,7 +3,7 @@
 # Import Layers
 import sys
 sys.path.append('../')
-import layer2.stub_layer_2 as Layer2
+import layer2.l4_layer_2 as Layer2
 import logging
 
 class StubLayer3:
