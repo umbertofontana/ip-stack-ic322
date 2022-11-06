@@ -6,7 +6,7 @@ sys.path.append('../')
 import layer3.stub_layer_3 as Layer3
 import logging
 import base64
-from time import time
+import time
 
 # Dictionary that correlates a port number to the object layer_5_cb
 # Server is on port 1200, Client is on port 1201
@@ -36,14 +36,14 @@ class StubLayer4:
         logging.debug(f"{connections}")
 
     # Timeout function
-    #def timeout(self):
-    #    start = time()
-    #    while ackcheck["ACK"] == 1:
-    #        if time() - start < 3:
-    #            continue
-    #        else:
-    #            return False # Ack did not arrive in the expected time
-    #    return True # Ack arrived in the expected time
+    def timeout(self):
+        start = time.time()
+        while ackcheck["ACK"] == 1:
+            if time.time() - start < 1:
+                continue
+            else:
+                return False # Ack did not arrive in the expected time
+        return True # Ack arrived in the expected time
     
     # Function to send an ACK
     def sendack(self):
@@ -67,11 +67,10 @@ class StubLayer4:
         # Pass the message down to Layer 3
         self.layer3.from_layer_4(segment)
         # Now that I've sent the message, I need to stop and wait for the ACK
-        # ackcheck["ACK"] = 1
-        # self.timeout() # I want to pass this function to the timeout function and call it back when it's done
-        # while self.timeout() == False:
-        #    self.sendack() # Send ACK again
-        
+        ackcheck["ACK"] = 1
+        self.timeout() # I want to pass this function to the timeout function and call it back when it's done
+        while self.timeout() == False: 
+            self.layer3.from_layer_4(segment) # Send segment again
             
         # See line 73. Pseudo-code:
         # while acklist[0] is empty > continue looping (if Layer 5 calls the function does it overrides this?) else > Erase dict and go on!
@@ -86,7 +85,7 @@ class StubLayer4:
 
         if ack == "ACK":
             # We have received an ACK: can proceed to send next segment
-        #    ackcheck["ACK"] = 0 # Reset the dictionary
+            ackcheck["ACK"] = 0 # Reset the dictionary
             # Send next segment
             logging.debug(f"ACK received")
             # This is the place to send the next packet when I implement a queue in the stop-and-wait protocol
