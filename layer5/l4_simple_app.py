@@ -3,8 +3,6 @@
 
 import logging
 
-assignedport = {}
-
 class SimpleApp:
     def __init__(self, port, layer4):
         # Save the layer 4 object as a instance variable so we can reference it later
