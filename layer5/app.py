@@ -7,8 +7,9 @@ from threading import Thread
 
 import sys
 sys.path.append('../')
-import layer4.stub_layer_4 as Layer4
-import simple_app as SimpleApp
+import layer4.l4_layer_4 as Layer4
+#import layer4.stub_layer_4 as Layer4
+import l4_simple_app as SimpleApp
 import logging
 
 # This line sets the logging level to "DEBUG".
@@ -19,7 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 layer4 = Layer4.StubLayer4()
 
 def start_server():
-    server = SimpleApp.SimpleApp(layer4)
+    server = SimpleApp.SimpleApp(80, layer4)
     data = server.message
     print("Server online.")
     while True:
@@ -45,7 +46,7 @@ def start_client():
 window=Tk()
 mywin=MyWindow(window)
 window.title('WEAPON LAUNCH')
-window.geometry("400x300+10+10")
+window.geometry("700x700+10+10")
 
 
 t = Thread(target=start_server, args = ())
