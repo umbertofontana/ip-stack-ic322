@@ -15,4 +15,4 @@ class SimpleApp:
 
     def send(self, receiver_addr, send_port, recv_port, data):
         # Send a message to a receiver, passing the right port
-        self.layer4.from_layer_5(data, send_port, recv_port, receiver_addr)
+        self.layer4.from_layer_5(data, send_port, recv_port, receiver_addr) # dest_address
