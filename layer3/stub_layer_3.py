@@ -4,7 +4,7 @@
 import sys
 from threading import Timer
 sys.path.append('../')
-import layer2.stub_layer_2 as Layer2
+import layer2.layer2integrated as Layer2
 import logging
 import re
 

@@ -7,7 +7,7 @@ from threading import Thread
 
 import sys
 sys.path.append('../')
-import layer4.stub_layer_4 as Layer4
+import layer4.l4_layer_4 as Layer4
 import simple_app as SimpleApp
 import logging
 
