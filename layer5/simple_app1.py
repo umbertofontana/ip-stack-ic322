@@ -4,9 +4,10 @@
 import logging
 import ExampleWepSys as wepSys
 from threading import *
+import layer4.l4_layer_4 as Layer4
 
 class SimpleSys:
-    def __init__(self, layer4):
+    def __init__(self, Layer4):
         """Create a client "process".
 
         We pass a layer 5 object so that we don't instantiate
@@ -15,11 +16,11 @@ class SimpleSys:
 
         # Save the layer 4 object as a instance variable
         # so we can reference it later
-        self.layer4 = layer4
+        self.Layer4 = Layer4
 
         # Open a new socket to listen on. Here we're choosing
         # port 80 (just as an example.)
-        self.layer4.connect_to_socket(80, self.receive)
+        self.Layer4.connect_to_socket(80, self.receive)
     
     def runGUI(self):
         self.GUI = wepSys.wepSys()
@@ -37,9 +38,12 @@ class SimpleSys:
     def send(self, receiver_addr, data):
         """Sends a message to a receiver.
         """
-
         # Send the message to layer 4. We haven't implemented
         # proper addresses yet so we're setting the port numbers
         # and addr to None.
-        self.layer4.from_layer_5(data=data, src_port=None,
-                dest_port=None, dest_addr=None)
+        src_port = 0
+        dest_port = 0
+        src_address = 0
+        dest_addr = 1
+        self.layer4.from_layer_5(data=data, src_port,
+                dest_port, src_address, dest_addr)
