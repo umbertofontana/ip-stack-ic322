@@ -60,24 +60,29 @@ class StubLayer3:
 
     #create header
     #message type 1 = ICMP
-    def create_header(self,data, destIP, messagetype, TTL):
-        data = str(destIP) + str(messagetype) + str(TTL) + data
+    def create_header(self, data, destaddr, messagetype, TTL):
+        data = str(destaddr) + str(messagetype) + str(TTL) + data
         return data
     
     def delete_header(self, data):
         return data[3:]
 
     #gets from layer 4
-    def from_layer_4(self, data, dest_addr):
+    def from_layer_4(self, segment):
         """Call this function to send data to this layer from layer 4"""
-        logging.debug(f"Layer 3 received msg from Layer 4: {data}")
+        logging.debug(f"Layer 3 received msg from Layer 4: {segment}")
 
         # The major job of Layer 3 is to decide which interface to send messages on.
         # You want to "map out" the network (probably using your own Layer 3 messages)
         # and then use some kind of routing algorithm to decide which interface to use.
     
         # Pass the message down to Layer 2; use interface 1.
-        data = self.create_header(data, dest_addr, 0, 2)
+        # I need to get the destination address and source address from Layer 4 header
+        logging.debug(segment)
+        ack, srcaddr, destaddr, srcport, destport, callback, sequencenumber, message = segment.split("|")
+        data = f"{ack}|{self.address}|{destaddr}|{srcport}|{destport}|{callback}|{sequencenumber}|{message}"
+
+        data = self.create_header(data, destaddr, 0, 2)
         
         self.layer2.from_layer_3(data, interface=1) 
         self.layer2.from_layer_3(data, interface=2) 
@@ -94,16 +99,19 @@ class StubLayer3:
         TTL = int(data[2])
         #print(str(destIP) + str(messType) + str(TTL))
         data = self.delete_header(data)
-
-        self.layer_4_cb(data)
-        if (destIP == self.address and TTL > 0 and messType == 0):
+        logging.debug(f"DestIP:{destIP},MessType:{messType},TTL:{TTL},MyAddr:{self.address} -- {data}")
+        logging.debug((destIP == self.address and TTL > 0 and messType == 0))
+        logging.debug(type(self.address))
+        #self.layer_4_cb(data)
+        if (destIP == int(self.address) and TTL > 0 and messType == 0):
+            logging.debug("Sending to layer 4 now")
             self.layer_4_cb(data)
         elif(messType == 0): #if TTL has expired
             #self.layer_4_cb(data)
             return
         elif(messType == 1):
             TTL -= 1
-            self.layer_4_cb("Connected to computer " + self.address)
+            #self.layer_4_cb("Connected to computer " + self.address)
         else:
             TTL = TTL - 1
             data = self.create_header(data, destIP, messType, TTL)

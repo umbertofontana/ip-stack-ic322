@@ -3,7 +3,7 @@
 # Import Layers 
 import sys
 sys.path.append('../')
-import layer3.l4_layer_3 as Layer3
+import layer3.stub_layer_3 as Layer3
 import logging
 import base64
 import time
@@ -35,31 +35,31 @@ class StubLayer4:
     def timeout(self):
         start = time.time()
         while ackcheck["ACK"] == 1:
-            if time.time() - start < 1:
+            if time.time() - start < 3:
                 continue
             else:
                 return False # Ack did not arrive in the expected time
         return True # Ack arrived in the expected time
     
     # Function to send an ACK
-    def sendack(self):
+    def sendack(self, srcaddr):
+        logging.debug(f"Helloooooooooo {srcaddr}")
         ack = "ACK"
-        segment = f"{ack}|||||"
+        segment = f"{ack}||{srcaddr}|||||"
         self.layer3.from_layer_4(segment)
 
     # Call this function to send data to this Layer from Layer 5.
-    def from_layer_5(self, data, src_port, dest_port, dest_addr):
+    def from_layer_5(self, data, destport, srcport, destaddr):
         global sequencenumber
         logging.debug(f"Layer 4 received msg from Layer 5: {data}")
         # Header implementation
-        # For now, the destination address is not included. I first need to see how Layer 3 will implement addresses
         # Encode the data in base64
         data = base64.b64encode(data.encode("utf-8"))
         data = str(data, "utf-8")
-        # The segment is structured as follows: ack|dest_port|src_port|sender_address(socket)|sequence_number|data
         # Dropped ACKs: implement sequence numbers here
-        # The socket is used as unique identifier. It will be easy to change that with the source address
-        header = f"{dest_port}|{src_port}|{self.layer_5_cb}|{sequencenumber}"
+        # The socket is used as unique identifier
+        # Header implementation: ACK | [srcaddress] | destaddress | srcport | destport | callback | sequencen
+        header = f"|{destaddr}|{srcport}|{destport}|{self.layer_5_cb}|{sequencenumber}"
         sequencenumber = sequencenumber + 1
         segment = f"|{header}|{data}"
         # Pass the message down to Layer 3
@@ -73,7 +73,8 @@ class StubLayer4:
     # Call this function to send data to this Layer from Layer 3
     def from_layer_3(self, segment):
         # Decode the header information and the data
-        ack, dest_port, src_port, msgsocket, seqnumber, data = segment.split("|")
+        logging.debug(segment)
+        ack, srcaddr, destaddr, srcport, destport, callback, sequencenumber, data = segment.split("|")
         if ack == "ACK":
             # We have received an ACK: can proceed to send next segment
             ackcheck["ACK"] = 0 # Reset the dictionary
@@ -81,35 +82,35 @@ class StubLayer4:
             logging.debug(f"ACK received")
         else:
             # The segment received is a new segment: pass it to Layer 5
-            if msgsocket in sequence: # The socket is already there. Let's check if it's the same sequence number
-                if sequence[msgsocket] == seqnumber:
+            if callback in sequence: # The socket is already there. Let's check if it's the same sequence number
+                if sequence[callback] == sequencenumber:
                     # It's the same. Drop the packet and send another ACK
-                    self.sendack()
+                    self.sendack(srcaddr)
                 else:
                     # It's not the same. Pass the message to layer 5 and update the dictionary
-                    sequence[msgsocket] = seqnumber
-                    dest_port = int(dest_port)
+                    sequence[callback] = sequencenumber
+                    destport = int(destport)
                     data = base64.b64decode(data)
                     data = str(data, "utf-8")
-                    logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {dest_port} from port {src_port}")
-                    # Then, send an ACK back to src_port: in order to recognize the packet as an ACK, the first field is ACK and all others are empty
-                    self.sendack()
+                    logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {destport} from port {srcport}")
+                    # Then, send an ACK back to srcport: in order to recognize the packet as an ACK, the first field is ACK and all others are empty
+                    self.sendack(srcaddr)
                     # Implement multiplexing based on the destination port in the header and send the data to Layer 5
-                    if dest_port == 0: # This message is directed to the chat. Let's make it nicer
+                    if destport == 0: # This message is directed to the chat. Let's make it nicer
                         msgformat = "[*] Chat: "
                     else: # This message is directed to the weapon control.
                         msgformat = "[*] Weapon: "
-                    connections[dest_port](data, msgformat)
+                    connections[destport](data, msgformat)
             else:
                 # The socket is not in the dictionary: update the dictionary and pass the message to Layer 5
-                sequence[msgsocket] = seqnumber
-                dest_port = int(dest_port)
+                sequence[callback] = sequencenumber
+                destport = int(destport)
                 data = base64.b64decode(data)
                 data = str(data, "utf-8")
-                logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {dest_port} from port {src_port}")
-                self.sendack() 
-                if dest_port == 0:
+                logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {destport} from port {srcport}")
+                self.sendack(srcaddr) 
+                if destport == 0:
                     msgformat = "[*] Chat: "
                 else:
                     msgformat = "[*] Weapon: "
-                connections[dest_port](data, msgformat)
+                connections[destport](data, msgformat)

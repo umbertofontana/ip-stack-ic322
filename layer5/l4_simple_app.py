@@ -13,6 +13,6 @@ class SimpleApp:
     def receive(self, data, msgformat): # msgformat is just a variable that I pass to make the output nicer while keeping the raw data unchanged
         print(f"{msgformat}{data}")
 
-    def send(self, receiver_addr, send_port, recv_port, data):
+    def send(self, message, destport, srcport, destaddress):
         # Send a message to a receiver, passing the right port
-        self.layer4.from_layer_5(data, send_port, recv_port, receiver_addr) # dest_address
+        self.layer4.from_layer_5(message, destport, srcport, destaddress) # dest_address

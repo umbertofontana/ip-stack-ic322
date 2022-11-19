@@ -12,8 +12,8 @@ import sys
 sys.path.append('../')
 # Import Layers 3/1
 # This is important because Layer 2's main role is to pass messages between Layers 1/3
-import mocklayer1 as Layer1
-import stub_layer_3 as Layer3
+import layer1.l4_mocklayer1 as Layer1
+import layer3.stub_layer_3 as Layer3
 
 # This is the Class for Layer 2
 class StubLayer2:
@@ -129,5 +129,5 @@ class StubLayer2:
             return
         else: # This means the given packet's hash matches the computed hash of the packet
             # Forward only data to layer 3
-            self.layer_3_cb.from_layer_2(ascii_string) # take off pre/post amble and hash 
+            self.layer_3_cb(ascii_string) # take off pre/post amble and hash 
             return

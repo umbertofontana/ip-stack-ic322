@@ -25,10 +25,11 @@ def start_chat():
     chat = SimpleApp.SimpleApp(chatport, layer4)
     print("Server online.")
     while True:
-        msg = input("Msg: ")
-        recv_port = int(input("Destination? <0: chat, 1: weapon control>"))
+        message = input("Msg: ")
+        destport = int(input("Chat or weapon? <0: chat, 1: weapon control>"))
+        destaddress = int(input("To which address? <0 through 4>"))
         # We haven't implemented an address scheme, so we will just pass the receiver_addr = None.
-        chat.send(None, chatport, recv_port, msg)
+        chat.send(message, destport, chatport, destaddress)
         
 def start_weapon():
     # The weapon only listens to feedback at the moment
