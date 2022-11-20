@@ -3,7 +3,7 @@
 # Import Layers 
 import sys
 sys.path.append('../')
-import layer3.stub_layer_3 as Layer3
+import layer3.layer3 as Layer3
 import logging
 import base64
 import time
@@ -27,7 +27,7 @@ class StubLayer4:
     # Connect an application to a socket.
     def connect_to_socket(self, layer_5_cb, port):
         self.layer_5_cb = layer_5_cb
-        logging.debug(f"Socket connected")
+        #logging.debug(f"Socket connected")
         # Based on the port value (0 for chat client, 1 for weapon control) assign the right socket and save it
         connections[port] = self.layer_5_cb
 
@@ -43,7 +43,7 @@ class StubLayer4:
     
     # Function to send an ACK
     def sendack(self, srcaddr):
-        logging.debug(f"Helloooooooooo {srcaddr}")
+        #logging.debug(f"Helloooooooooo {srcaddr}")
         ack = "ACK"
         segment = f"{ack}||{srcaddr}|||||"
         self.layer3.from_layer_4(segment)
@@ -51,7 +51,7 @@ class StubLayer4:
     # Call this function to send data to this Layer from Layer 5.
     def from_layer_5(self, data, destport, srcport, destaddr):
         global sequencenumber
-        logging.debug(f"Layer 4 received msg from Layer 5: {data}")
+        #logging.debug(f"Layer 4 received msg from Layer 5: {data}")
         # Header implementation
         # Encode the data in base64
         data = base64.b64encode(data.encode("utf-8"))
@@ -73,13 +73,13 @@ class StubLayer4:
     # Call this function to send data to this Layer from Layer 3
     def from_layer_3(self, segment):
         # Decode the header information and the data
-        logging.debug(segment)
+        #logging.debug(segment)
         ack, srcaddr, destaddr, srcport, destport, callback, sequencenumber, data = segment.split("|")
         if ack == "ACK":
             # We have received an ACK: can proceed to send next segment
             ackcheck["ACK"] = 0 # Reset the dictionary
             # Send next segment
-            logging.debug(f"ACK received")
+            #logging.debug(f"ACK received")
         else:
             # The segment received is a new segment: pass it to Layer 5
             if callback in sequence: # The socket is already there. Let's check if it's the same sequence number
@@ -92,7 +92,7 @@ class StubLayer4:
                     destport = int(destport)
                     data = base64.b64decode(data)
                     data = str(data, "utf-8")
-                    logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {destport} from port {srcport}")
+                    #logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {destport} from port {srcport}")
                     # Then, send an ACK back to srcport: in order to recognize the packet as an ACK, the first field is ACK and all others are empty
                     self.sendack(srcaddr)
                     # Implement multiplexing based on the destination port in the header and send the data to Layer 5
@@ -107,7 +107,7 @@ class StubLayer4:
                 destport = int(destport)
                 data = base64.b64decode(data)
                 data = str(data, "utf-8")
-                logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {destport} from port {srcport}")
+                #logging.debug(f"Layer 4 received msg from Layer 3: {segment} -> {data} to port {destport} from port {srcport}")
                 self.sendack(srcaddr) 
                 if destport == 0:
                     msgformat = "[*] Chat: "
