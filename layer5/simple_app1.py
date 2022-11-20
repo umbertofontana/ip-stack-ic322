@@ -4,7 +4,7 @@
 import logging
 import ExampleWepSys as wepSys
 from threading import *
-import layer4.l4_layer_4 as Layer4
+import layer4.layer4 as Layer4
 
 class SimpleSys:
     def __init__(self, Layer4):
