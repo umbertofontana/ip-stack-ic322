@@ -103,7 +103,7 @@ class MockLayer1:
                 if random.randint(0, 100) < self.noise_rate * 100:
                     if random.randint(0,1) == 0: 
                         # add bit
-                        data_string = data_string[0:i] + str(randint(0,1))+ data_string[i:]
+                        data_string = data_string[0:i] + str(random.randint(0,1))+ data_string[i:]
                     else:
                         # drop bit
                         data_string = data_string[0:i] + data_string[i+1:]

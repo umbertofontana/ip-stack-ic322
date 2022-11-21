@@ -70,7 +70,7 @@ class StubLayer3:
     #gets from layer 4
     def from_layer_4(self, segment):
         """Call this function to send data to this layer from layer 4"""
-        #logging.debug(f"Layer 3 received msg from Layer 4: {segment}")
+        logging.debug(f"Layer 3 received msg from Layer 4: {segment}")
 
         # The major job of Layer 3 is to decide which interface to send messages on.
         # You want to "map out" the network (probably using your own Layer 3 messages)
@@ -90,7 +90,7 @@ class StubLayer3:
 
     def from_layer_2(self, data):
         """Call this function to send data to this layer from layer 2"""
-        #logging.debug(f"Layer 3 received msg from Layer 2: {data}")
+        logging.debug(f"Layer 3 received msg from Layer 2: {data}")
 
         # Is this data addressed to this host? If so, pass it up to the next layer.
         # If not, pass it back down to the correct interface on Layer 2.

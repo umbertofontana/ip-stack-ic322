@@ -41,7 +41,7 @@ class StubLayer2:
         # field (hash), or "end pattern" (postamble).
     def from_layer_3(self, data, interface):
         """Call this function to send data to this layer from layer 3"""
-        #logging.debug(f"Layer 2 received msg from Layer 3: {data}")
+        logging.debug(f"Layer 2 received msg from Layer 3: {data}")
         
         # First, we take the data and compute its Hashed value using python's built in hashlib() function
         hash_object = hashlib.md5(data.encode())
@@ -79,7 +79,7 @@ class StubLayer2:
         # 1. How will you know if the bits are actually part of a message, or just noise?
     def from_layer_1(self, data):
         """Call this function to send data to this layer from layer 1"""
-        #logging.debug(f"Layer 2 received msg from Layer 1: {data}")
+        logging.debug(f"Layer 2 received msg from Layer 1: {data}")
         # Set variables for the data, preamble, and postamble
         myData = ""
         pre = -1
