@@ -12,7 +12,7 @@ import sys
 sys.path.append('../')
 # Import Layers 3/1
 # This is important because Layer 2's main role is to pass messages between Layers 1/3
-import layer1.layer1 as Layer1
+import layer1.EdgeCodesLayer1 as Layer1
 import layer3.layer3 as Layer3
 
 # This is the Class for Layer 2
@@ -28,10 +28,10 @@ class StubLayer2:
         
         # Connect to Layer 1 on interfaces 0, 1, 2, and 3
         # This is because the group for Network Layer 3 implemented it with 3 interface: 0, 1, 2, and 3
-        self.layer1_interface_0 = Layer1.MockLayer1(interface_number=0, layer_2_cb=self.from_layer_1)
-        self.layer1_interface_1 = Layer1.MockLayer1(interface_number=1, layer_2_cb=self.from_layer_1)
-        self.layer1_interface_2 = Layer1.MockLayer1(interface_number=2, layer_2_cb=self.from_layer_1)
-        self.layer1_interface_3 = Layer1.MockLayer1(interface_number=3, layer_2_cb=self.from_layer_1)
+        self.layer1_interface_0 = Layer1.EdgeCodesLayer1(interface_number=0, layer_2_cb=self.from_layer_1)
+        self.layer1_interface_1 = Layer1.EdgeCodesLayer1(interface_number=1, layer_2_cb=self.from_layer_1)
+        self.layer1_interface_2 = Layer1.EdgeCodesLayer1(interface_number=2, layer_2_cb=self.from_layer_1)
+        self.layer1_interface_3 = Layer1.EdgeCodesLayer1(interface_number=3, layer_2_cb=self.from_layer_1)
 
     # This function defines what the Layer 2 class will do when it receives a Layer 3 packet from the
     # specified interface
