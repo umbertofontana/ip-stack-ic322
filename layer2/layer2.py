@@ -29,9 +29,9 @@ class StubLayer2:
         # Connect to Layer 1 on interfaces 0, 1, 2, and 3
         # This is because the group for Network Layer 3 implemented it with 3 interface: 0, 1, 2, and 3
         self.layer1_interface_0 = Layer1.EdgeCodesLayer1(interface_number=0, layer_2_cb=self.from_layer_1)
-        self.layer1_interface_1 = Layer1.EdgeCodesLayer1(interface_number=1, layer_2_cb=self.from_layer_1)
-        self.layer1_interface_2 = Layer1.EdgeCodesLayer1(interface_number=2, layer_2_cb=self.from_layer_1)
-        self.layer1_interface_3 = Layer1.EdgeCodesLayer1(interface_number=3, layer_2_cb=self.from_layer_1)
+        #self.layer1_interface_1 = Layer1.EdgeCodesLayer1(interface_number=1, layer_2_cb=self.from_layer_1)
+        #self.layer1_interface_2 = Layer1.EdgeCodesLayer1(interface_number=2, layer_2_cb=self.from_layer_1)
+        #self.layer1_interface_3 = Layer1.EdgeCodesLayer1(interface_number=3, layer_2_cb=self.from_layer_1)
 
     # This function defines what the Layer 2 class will do when it receives a Layer 3 packet from the
     # specified interface
@@ -60,12 +60,13 @@ class StubLayer2:
         # Pass the message down to Layer 1. 
         if interface == 0:# Send to interface 0
             self.layer1_interface_0.from_layer_2(binary)
-        elif interface == 1: # Send to interface 1
-            self.layer1_interface_1.from_layer_2(binary)
-        elif interface == 2: # Send to interface 2
-            self.layer1_interface_2.from_layer_2(binary)
-        elif interface == 3: # Send to interface 3
-            self.layer1_interface_3.from_layer_2(binary)
+        ##############DEBUG################ REMOVE AFTER 
+        #elif interface == 1: # Send to interface 1
+        #    self.layer1_interface_1.from_layer_2(binary)
+        #elif interface == 2: # Send to interface 2
+        #    self.layer1_interface_2.from_layer_2(binary)
+        #elif interface == 3: # Send to interface 3
+        #    self.layer1_interface_3.from_layer_2(binary)
         
     # This is a helper function to convert a string of binary digits into a decimal value
     def BinaryToDecimal(self, binary):

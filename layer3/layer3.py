@@ -54,8 +54,10 @@ class StubLayer3:
     # sends discovery message to all connected places
     def send_discovery_message(self):
         data = self.create_header("", 0, 1, 2)
-        self.layer2.from_layer_3(data, interface=1) 
-        self.layer2.from_layer_3(data, interface=2) 
+        ######################DEBUG 
+        self.layer2.from_layer_3(data, interface=0) 
+        #self.layer2.from_layer_3(data, interface=1) 
+        #self.layer2.from_layer_3(data, interface=2) 
 
 
     #create header
@@ -84,8 +86,10 @@ class StubLayer3:
 
         data = self.create_header(data, destaddr, 0, 2)
         
-        self.layer2.from_layer_3(data, interface=1) 
-        self.layer2.from_layer_3(data, interface=2) 
+        self.layer2.from_layer_3(data, interface=0) 
+        #####################DEBUG##################### 
+        #self.layer2.from_layer_3(data, interface=1) 
+        #self.layer2.from_layer_3(data, interface=2) 
         #send data to from_layer_2 while it wait for ack from_layer_2(self, data)
 
     def from_layer_2(self, data):
@@ -115,8 +119,10 @@ class StubLayer3:
         else:
             TTL = TTL - 1
             data = self.create_header(data, destIP, messType, TTL)
-            self.layer2.from_layer_3(data, interface=1)
-            self.layer2.from_layer_3(data, interface=2)
+            #############DEBUG 
+            self.layer2.from_layer_3(data, interface=0) 
+            #self.layer2.from_layer_3(data, interface=1)
+            #self.layer2.from_layer_3(data, interface=2)
 
     
         # If you're using some kind of "Layer 3 message" to communicate between different
