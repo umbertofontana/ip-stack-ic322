@@ -154,7 +154,7 @@ class EdgeCodesLayer1:
         GPIO.output(self.output_pin, self.output_value)
         for d in data:
             self.output_value = not self.output_value
-            logging.debug(f"setting {self.output_pin} to {self.output_value} ({d})")
+            #logging.debug(f"setting {self.output_pin} to {self.output_value} ({d})")
             GPIO.output(self.output_pin, self.output_value)
             if d == 1:
                 time.sleep(self.clock_interval/1000000000)
