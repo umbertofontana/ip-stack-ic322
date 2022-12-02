@@ -29,7 +29,7 @@ class StubLayer2:
         # Connect to Layer 1 on interfaces 0, 1, 2, and 3
         # This is because the group for Network Layer 3 implemented it with 3 interface: 0, 1, 2, and 3
         self.layer1_interface_0 = Layer1.EdgeCodesLayer1(interface_number=0, layer_2_cb=self.from_layer_1)
-        #self.layer1_interface_1 = Layer1.EdgeCodesLayer1(interface_number=1, layer_2_cb=self.from_layer_1)
+        self.layer1_interface_1 = Layer1.EdgeCodesLayer1(interface_number=1, layer_2_cb=self.from_layer_1)
         #self.layer1_interface_2 = Layer1.EdgeCodesLayer1(interface_number=2, layer_2_cb=self.from_layer_1)
         #self.layer1_interface_3 = Layer1.EdgeCodesLayer1(interface_number=3, layer_2_cb=self.from_layer_1)
 
