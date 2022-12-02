@@ -100,6 +100,10 @@ class StubLayer2:
             
         # Get the hash (first 40 bits (5 Bytes) after preamble)
         binHash = data[pre:pre+40]
+        print(type(binHsh))
+        ### DEBUG ###
+        binHash = string(binHash)
+        print(type(binHash))
         # Get the Data payload (after hash)
         myData = data[pre+40:post-16]
 
