@@ -35,7 +35,7 @@ class StubLayer4:
     def timeout(self):
         start = time.time()
         while ackcheck["ACK"] == 1:
-            if time.time() - start < 3:
+            if time.time() - start < 120:
                 continue
             else:
                 return False # Ack did not arrive in the expected time

@@ -32,8 +32,8 @@ class StubLayer3:
 
 
         # self.layer2.from_layer_3("connection successful", interface=2)
-        t = Timer(30, self.send_discovery_message)
-        t.start()
+    #    t = Timer(30, self.send_discovery_message)
+    #    t.start()
     def parse_args(self):
         """A very simple command line argument parser. It supports arguments in the form of
                 --key=value
@@ -52,12 +52,12 @@ class StubLayer3:
 
         return cmd_line_key_values 
     # sends discovery message to all connected places
-    def send_discovery_message(self):
-        data = self.create_header("", 0, 1, 2)
-        ######################DEBUG 
-        self.layer2.from_layer_3(data, interface=0) 
-        #self.layer2.from_layer_3(data, interface=1) 
-        #self.layer2.from_layer_3(data, interface=2) 
+    #def send_discovery_message(self):
+    #    data = self.create_header("", 0, 1, 2)
+    #    ######################DEBUG 
+    #    self.layer2.from_layer_3(data, interface=0) 
+    #    self.layer2.from_layer_3(data, interface=1) 
+    #    #self.layer2.from_layer_3(data, interface=2) 
 
 
     #create header
@@ -88,7 +88,7 @@ class StubLayer3:
         
         self.layer2.from_layer_3(data, interface=0) 
         #####################DEBUG##################### 
-        #self.layer2.from_layer_3(data, interface=1) 
+        self.layer2.from_layer_3(data, interface=1) 
         #self.layer2.from_layer_3(data, interface=2) 
         #send data to from_layer_2 while it wait for ack from_layer_2(self, data)
 
@@ -121,7 +121,7 @@ class StubLayer3:
             data = self.create_header(data, destIP, messType, TTL)
             #############DEBUG 
             self.layer2.from_layer_3(data, interface=0) 
-            #self.layer2.from_layer_3(data, interface=1)
+            self.layer2.from_layer_3(data, interface=1)
             #self.layer2.from_layer_3(data, interface=2)
 
     

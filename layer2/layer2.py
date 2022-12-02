@@ -81,6 +81,10 @@ class StubLayer2:
     def from_layer_1(self, data):
         """Call this function to send data to this layer from layer 1"""
         logging.debug(f"Layer 2 received msg from Layer 1: {data}")
+        # Convert the received data from list to string
+        data = [str(x) for x in data]
+        data = "".join(data)
+
         # Set variables for the data, preamble, and postamble
         myData = ""
         pre = -1
@@ -99,13 +103,12 @@ class StubLayer2:
                 post = x
             
         # Get the hash (first 40 bits (5 Bytes) after preamble)
+        ########## DEBUG ##########
         binHash = data[pre:pre+40]
-        print(type(binHsh))
-        ### DEBUG ###
-        binHash = string(binHash)
-        print(type(binHash))
+        binHash = str(binHash)
         # Get the Data payload (after hash)
         myData = data[pre+40:post-16]
+        myData = str(myData)
 
         # Get the strings of the hash value and the string data
         ascii_string = "" # data string
