@@ -1,6 +1,7 @@
 import sys
 from socket import *
 from threading import Thread, Timer
+from multiprocessing import Process
 
 import RPi.GPIO as GPIO
 import time
@@ -26,6 +27,15 @@ def parse_args():
         cmd_line_key_values[k] = v
 
     return cmd_line_key_values
+
+
+def non_blocking_sleep(time_in_ns):
+    """Waits time_in_ns nanoseconds. This function does block the thread but it doesn't block the process."""
+    target_time = time.time_ns() + time_in_ns
+    while time.time_ns() < target_time:
+        pass
+
+    return
 
 class EdgeCodesLayer1:
     def __init__(self, interface_number, layer_2_cb, enforce_binary=False):
@@ -90,7 +100,9 @@ class EdgeCodesLayer1:
         """
 
         # Send the bits to a function that modulates the voltage on the pins.
-        self.send_and_block(data)
+        p = Process(target=self.send_and_block, args = (data,))
+        p.start()
+        p.join()
 
     def receive_edge(self, channel):
         """Called on the rising edge of a signal."""
@@ -128,7 +140,7 @@ class EdgeCodesLayer1:
 
             # save the value of this variable.
             msg = self.received_message
-            #logging.debug(f"Checking if message is complete. Current message: {msg}")
+            # logging.debug(f"Checking if message is complete. Current message: {msg}")
 
             # do the math to see how long it's been since the last bit was received
             signal_length = time.time_ns() - self.time_last_edge_received

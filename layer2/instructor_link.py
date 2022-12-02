@@ -45,6 +45,7 @@ def string_from_bin_list(bl):
     return msg
 
 
+
 class StubLayer2:
     def __init__(self, layer_3_cb):
         """Create a Layer 2 Object.
@@ -78,8 +79,11 @@ class StubLayer2:
 
         # Convert binary list back to string
 
-        msg = string_from_bin_list(data)
 
-        self.layer_3_cb(msg)
+        try:
+            msg = string_from_bin_list(data)
+            self.layer_3_cb(msg)
+        except UnicodeDecodeError as e:
+            logging.error("Layer 2 error understanding message from layer 1. Probably a corrupted message. Tossing out.")
 
 
