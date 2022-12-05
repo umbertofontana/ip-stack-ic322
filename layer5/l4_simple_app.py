@@ -81,7 +81,7 @@ class SimpleApp:
             concat = "" + self.chat.get() + "\n" + "Enter text in the format [MSG]~[dest port]~[dest addr]"
         else:
             concat = "" + self.chat.get() + "\n" + words[0] + "\n\t" + "Sent to address " + words[1] + ", port " + words[2]
-            self.send(words[0],int(words[2]),self.user.port,int(words[2]))
+            self.send(words[0],int(words[2]),self.user.port,int(words[1]))
         self.chat.set(concat)
         self.chatbox.place(x=50, y=60, anchor='nw')
 
