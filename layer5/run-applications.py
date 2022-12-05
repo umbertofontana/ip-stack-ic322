@@ -22,10 +22,10 @@ layer4 = Layer4.StubLayer4()
 
 def start_chat(mywin, sender):
     chatport = 0 # The port where the chat client communicates is hardcoded as 0
-    chat = SimpleApp.SimpleApp(chatport, layer4)
+    chat = SimpleApp.SimpleApp(chatport, layer4, mywin, sender)
     print("Server online.")
     while True:
-
+        pass
         '''
         message = input("Msg: ")
         destport = int(input("Chat or weapon? <0: chat, 1: weapon control>"))
@@ -37,7 +37,7 @@ def start_chat(mywin, sender):
 def start_weapon(mywin, sender):
     # The weapon only listens to feedback at the moment
     weaponport = 1 # The port where the weapon control communicates is hardcoded as 1
-    weapon = SimpleApp.SimpleApp(weaponport, layer4)
+    weapon = SimpleApp.SimpleApp(weaponport, layer4, mywin, sender)
     while True:
         pass
 

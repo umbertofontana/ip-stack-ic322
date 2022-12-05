@@ -33,7 +33,6 @@ class SimpleApp:
 
 
             self.chat.set("Welcome, " + username.upper() + "\n---------------------")
-            #self.p = Popen(['nc','-l','-p','12345'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
             self.chatbox=Label(win, textvariable=self.chat, justify=LEFT)
             self.chatdata = ""
             
