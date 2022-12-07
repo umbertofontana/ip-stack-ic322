@@ -53,13 +53,6 @@ class SimpleApp:
         # Send a message to a receiver, passing the right port
         self.layer4.from_layer_5(message, destport, srcport, destaddress) # dest_address
 
-
-
-
-
-
-
-
     def status(self):
         self.status = random.choice(["faulty", "good to go", "in need of repair","ready for firing"])
         concat = "" + self.chat.get() + "\n" + "Systems are " + self.status
