@@ -45,14 +45,14 @@ class StubLayer2:
         
         # First, we take the data and compute its Hashed value using python's built in hashlib() function
         hash_object = hashlib.md5(data.encode())
-        hash_value = hash_object.hexdigest()[0:5] # Take 5 digits from the Hash
+        hash_value = hash_object.hexdigest()[0:4] # Take 5 digits from the Hash
         data = hash_value + data # Add the hash to the front of the data
         
         # Converts the input string to binary so that is can be sent to layer 1
         binary = ''.join(format(ord(i), '08b') for i in data)
         # add the preamble and postamble (24 bits each) to front/back respectively of the packet
         # This is so that layer 2 will ignore any "noise" it receives from Layer 1 on the wire
-        binary = "010101010101111010001111" + binary + "000011110101000111010101"
+        binary = "0101010101011110" + binary + "0000111101010001"
         
         # Layer 3 is making the decision about which interface to send the data. Layer 2
         # simply follows Layer 3's directions (and receives the interface number as an
@@ -91,23 +91,26 @@ class StubLayer2:
         post = -1
         # Look for the first 24 bits corresponding to the preamble
         # The purpose of this is so that if there is any noise from layer 1, it will be ignored
-        for x in range(len(data)-23): 
-            if(data[x:x+24] == "010101010101111010001111"): # Look for preamble bits
-                pre = x+24
+        for x in range(len(data)-15): 
+            #if(data[x:x+24] == "010101010101111010001111"): # Look for preamble bits
+            if(data[x:x+16] == "0101010101011110"): # Look for preamble bits
+                pre = x+16
                 break # Make sure it only grabs first occurrence, otherwise could be in the middle
             # of the packet's data and lose some of it
 
         # Look for the postamble to know when the end of the packet has been reached
-        for x in range(len(data)-24):
-            if(data[x:x+24] == "000011110101000111010101"):
+        for x in range(len(data)-16):
+        #for x in range(len(data)-24):
+            #if(data[x:x+24] == "000011110101000111010101"):
+            if(data[x:x+16] == "0000111101010001"):
                 post = x
             
         # Get the hash (first 40 bits (5 Bytes) after preamble)
         ########## DEBUG ##########
-        binHash = data[pre:pre+40]
+        binHash = data[pre:pre+32]
         binHash = str(binHash)
         # Get the Data payload (after hash)
-        myData = data[pre+40:post-16]
+        myData = data[pre+32:post-8]
         myData = str(myData)
 
         # Get the strings of the hash value and the string data
@@ -123,7 +126,7 @@ class StubLayer2:
 
         # Compute the hash value of this data
         hash_Object = hashlib.md5(ascii_string.encode())
-        hash_Value = hash_Object.hexdigest()[0:5]
+        hash_Value = hash_Object.hexdigest()[0:4]
 
         # Get the hash from the original message
         for i in range(0, len(binHash), 8):
