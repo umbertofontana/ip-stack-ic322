@@ -6,7 +6,7 @@ from threading import Thread
 import sys
 sys.path.append('../')
 import layer4.layer4 as Layer4
-import l4_simple_app as SimpleApp # Remember to change this when we merge
+import l4_simple_app2 as SimpleApp # Remember to change this when we merge
 import logging
 from tkinter import *
 
@@ -42,12 +42,12 @@ def start_weapon(mywin, sender):
         #pass
 
 window=Tk()
-window.title('WEAPON LAUNCH')
-window.geometry("800x700+10+10")
+window.title('M.E.N.T.O.S.')
+window.geometry("400x300+10+10")
 
-t = Thread(target=start_chat, args = (window,True))
+t = Thread(target=start_chat, args = (window,False))
 t.start()
-t = Thread(target=start_weapon, args = (window,False))
+t = Thread(target=start_weapon, args = (window,True))
 t.start()
 
 window.mainloop()
