@@ -15,7 +15,7 @@ class SimpleApp:
 
         #######################################
         # GUI #
-        if not sender:
+        if sender:
             self.chat = StringVar()
             self.chat.set("LOGIN with STDIN")
 
