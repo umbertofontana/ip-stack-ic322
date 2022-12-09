@@ -66,6 +66,7 @@ class SimpleApp:
         concat = "" + self.chat.get() + "\n" + "***LAUNCHING WEAPON, BEGIN COUNTDOWN***\nNOTIFYING OTHER DEPARTMENTS"
         self.chat.set(concat)
         self.chatbox.place(x=50, y=60, anchor='nw')
+        self.send(self, "F", 1, self.user.port, 2)
         
     def updateChat(self):
         self.buttonClicked = not self.buttonClicked 
