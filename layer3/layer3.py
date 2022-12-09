@@ -81,7 +81,7 @@ class StubLayer3:
         # Pass the message down to Layer 2; use interface 1.
         # I need to get the destination address and source address from Layer 4 header
         #logging.debug(segment)
-        ack, srcaddr, destaddr, srcport, destport, callback, sequencenumber, message = segment.split("|")
+        ack, srcaddr, destaddr, srcport, destport, sequencenumber, message = segment.split("|")
         data = f"{ack}|{self.address}|{destaddr}|{srcport}|{destport}|{callback}|{sequencenumber}|{message}"
 
         data = self.create_header(data, destaddr, 0, 2)

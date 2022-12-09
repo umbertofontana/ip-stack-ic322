@@ -44,7 +44,7 @@ class StubLayer4:
     # Function to send an ACK
     def sendack(self, srcaddr):
         ack = "ACK"
-        segment = f"{ack}||{srcaddr}|||||"
+        segment = f"{ack}||{srcaddr}||||"
         self.layer3.from_layer_4(segment)
 
     # Call this function to send data to this Layer from Layer 5.
@@ -58,7 +58,7 @@ class StubLayer4:
         # Dropped ACKs: implement sequence numbers here
         # The socket is used as unique identifier
         # Header implementation: ACK | [srcaddress] | destaddress | srcport | destport | callback | sequencen
-        header = f"|{destaddr}|{srcport}|{destport}|{self.layer_5_cb}|{sequencenumber}"
+        header = f"|{destaddr}|{srcport}|{destport}|{sequencenumber}"
         sequencenumber = sequencenumber + 1
         segment = f"|{header}|{data}"
         # Pass the message down to Layer 3
@@ -72,7 +72,7 @@ class StubLayer4:
     # Call this function to send data to this Layer from Layer 3
     def from_layer_3(self, segment):
         # Decode the header information and the data
-        ack, srcaddr, destaddr, srcport, destport, callback, sequencenumber, data = segment.split("|")
+        ack, srcaddr, destaddr, srcport, destport, sequencenumber, data = segment.split("|")
         if ack == "ACK":
             # We have received an ACK: can proceed to send next segment
             ackcheck["ACK"] = 0 # Reset the dictionary
@@ -80,13 +80,13 @@ class StubLayer4:
             logging.debug(f"ACK received")
         else:
             # The segment received is a new segment: pass it to Layer 5
-            if callback in sequence: # The socket is already there. Let's check if it's the same sequence number
-                if sequence[callback] == sequencenumber:
+            if srcaddr in sequence: # The socket is already there. Let's check if it's the same sequence number
+                if sequence[srcaddr] == sequencenumber:
                     # It's the same. Drop the packet and send another ACK
                     self.sendack(srcaddr)
                 else:
                     # It's not the same. Pass the message to layer 5 and update the dictionary
-                    sequence[callback] = sequencenumber
+                    sequence[srcaddr] = sequencenumber
                     destport = int(destport)
                     data = base64.b64decode(data)
                     data = str(data, "utf-8")
@@ -101,7 +101,7 @@ class StubLayer4:
                     connections[destport](data, msgformat)
             else:
                 # The socket is not in the dictionary: update the dictionary and pass the message to Layer 5
-                sequence[callback] = sequencenumber
+                sequence[srcaddr] = sequencenumber
                 destport = int(destport)
                 data = base64.b64decode(data)
                 data = str(data, "utf-8")
